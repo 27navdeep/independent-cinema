@@ -14,7 +14,10 @@ const UserSchema = mongoose.Schema({
                 unique : true, 
                 required : true},
     password : {type : String, 
-                required : true}
+                required : true},
+    role : {type : String, 
+            required : true,
+            default : "customer"}
 },
 {
     timestamps:true

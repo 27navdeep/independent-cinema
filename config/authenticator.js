@@ -4,8 +4,8 @@ const dotenv = require('dotenv');
 // get config vars
 dotenv.config();
 
-exports.generateAccessToken = (username) => {
+exports.generateAccessToken = (username, role) => {
     const tokenSecret = process.env.TOKEN_SECRET;
-    console.log(username)
-    return jwt.sign({username: username}, tokenSecret, { expiresIn: '1800s' });
+    console.log(username, role)
+    return jwt.sign({username: username, role : role}, tokenSecret, { expiresIn: '1800s' });
 }

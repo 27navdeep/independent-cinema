@@ -8,6 +8,7 @@ exports.register = async (req, res) => {
   const email = req.body.email
   const userName = req.body.userName
   const password = req.body.password
+  const role = req.body.role
 
   if (!firstName) {
     return res.status(400).send({
@@ -35,18 +36,23 @@ exports.register = async (req, res) => {
       message: "Password cannot be empty"
     });
   }
+  if (!role) {
+    role = 'customer'
+  }
 
   const user = new User({
     firstName: firstName,
     lastName: lastName,
     email: email,
     userName: userName,
+    role : role,
     password:  bcrypt.hashSync(password, 10)
   });
 
   await user.save()
     .then(() => {
-      const authToken = generateAccessToken(email)
+      const authToken = generateAccessToken(email,role)
+      console.log(authToken)
       return res.send({
         message: "Registration successful",
         user: user,
@@ -84,7 +90,7 @@ exports.login = async (req, res) => {
     }
     const passwordMatch = await bcrypt.compare(password, user.password);    
     if (passwordMatch) {
-      const authToken = generateAccessToken(email)
+      const authToken = generateAccessToken(email, user.role)
       // return ({ message: "Login Successful" });
       res.send({
         message: "Login Successful",
@@ -161,7 +167,8 @@ exports.update = (req,res) =>{
     User.findByIdAndUpdate(id, {
         email : req.body.email,
         userName: req.body.userName,
-        password: req.body.password
+        password: req.body.password,
+        role : req.body.role
     },{new:true}).then(user =>{
         res.send(user)
     }).catch(err => {
